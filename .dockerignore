@@ -1,0 +1,17 @@
+venv/
+tools/
+data/video/
+data/highlights/
+data/reference/
+data/*.csv
+!data/team_colors.csv
+data/*.jsonl
+data/*.json
+__pycache__/
+*.pyc
+.pytest_cache/
+runs/
+*.wav
+*.mp4
+*.png
+*.jpg

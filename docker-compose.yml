@@ -1,0 +1,91 @@
+services:
+  kafka:
+    image: apache/kafka:3.7.0
+    container_name: nflapp-kafka
+    restart: unless-stopped
+    ports:
+      - "9094:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+
+  ingestion:
+    build: .
+    container_name: nflapp-ingestion
+    restart: unless-stopped
+    command: python ingestion_service.py
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      VIDEO_PATH: /app/data/video/test_clip_av.mp4
+      PLAYBACK_SPEED: "4.0"
+      LOOP: "true"
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - kafka
+
+  ocr_service:
+    build: .
+    container_name: nflapp-ocr
+    restart: unless-stopped
+    command: python ocr_service.py
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - kafka
+
+  detection_service:
+    build: .
+    container_name: nflapp-detection
+    restart: unless-stopped
+    command: python detection_service.py
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      AWAY_TEAM: PHI
+      HOME_TEAM: NYG
+      POSTEAM: NYG
+      DETECTION_STRIDE: "3"
+    depends_on:
+      - kafka
+
+  fusion_service:
+    build: .
+    container_name: nflapp-fusion
+    restart: unless-stopped
+    command: python fusion_service.py
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - kafka
+
+  highlight_service:
+    build: .
+    container_name: nflapp-highlight
+    restart: unless-stopped
+    command: python highlight_service.py
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      VIDEO_PATH: /app/data/video/test_clip_av.mp4
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - kafka
+
+  dashboard:
+    build: .
+    container_name: nflapp-dashboard
+    restart: unless-stopped
+    command: streamlit run dashboard_service.py --server.address 0.0.0.0 --server.port 8501
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "8501:8501"
+    depends_on:
+      - kafka

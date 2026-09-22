@@ -1,0 +1,58 @@
+Íme egy átfogó, részletes fejlesztési útmutató és projektterv a Real-Time NFL Cognitive Engine nevezetű, mindent magába foglaló rendszerhez. Ez a dokumentum a koncepciót üzembe helyezhető, moduláris szoftverarchitektúrává bontja, amely összeköti a streamelési mérnökséget, a számítógépes látást (Computer Vision), a gépi tanulást és az nflverse statisztikai adatbázisait.Projektterv: Real-Time NFL Cognitive Engine (Fejlesztési Útmutató)1. Architektúra és Rendszer-áttekintésA rendszer egy eseményvezérelt, mikroszolgáltatás-alapú architektúrán nyugszik, ahol a videófolyam feldolgozása, a statisztikai predikció és a felhasználói felület külön konténerekben (Docker) fut, az adatok áramlását pedig egy Apache Kafka üzenetközvetítő biztosítja.[NFL Live Stream Source] 
+       │
+       ▼
+┌───────────────────────────────┐
+│ Ingestion & Streaming Layer   │ (FFmpeg / OpenCV / Kafka)
+└──────┬─────────────────┬──────┘
+       │ (Video Frames)  │ (Audio/Metadata)
+       ▼                 ▼
+┌──────────────┐  ┌──────────────┐
+│ Computer     │  │ Audio / OCR  │
+│ Vision (YOLO)│  │ Extractor    │
+└──────┬──────┘  └──────┬───────┘
+       │                │
+       ▼                ▼
+┌───────────────────────────────┐
+│ Core Intelligence Engine      │ (PyTorch / Scikit-Learn + nflverse PBP)
+└──────────────┬────────────────┘
+               │ (Real-time Insights & Clips)
+               ▼
+┌───────────────────────────────┐
+│ Output & Dashboard UI         │ (FastAPI / Streamlit / Web UI)
+└───────────────────────────────┘
+2. Modulok és Részletes Megvalósítási TervModul 1: Adatbeviteli és Streamelési Réteg (Ingestion Pipeline)Cél: A végtelen live stream stabil, folyamatos feldolgozása, keretekre (frames) és hangfolyamra bontása anélkül, hogy memóriaszivárgás vagy adatvesztés történne.Technológiai stack: Python, OpenCV, FFmpeg, Apache Kafka, Docker.Részletes feladatok:Stream Catcher: Egy robustus FFmpeg wrapper írása, amely kezeli a hálózati megszakításokat, újrakapcsolódik élő stream esetén, és fix FPS-sel (pl. 30 FPS) tömörített kereteket küld a Kafka producernek.Kafka Topic Stratégia: Két külön topic létrehozása:nfl.raw.frames: A videókockák bináris adataihoz.nfl.raw.audio: Az időszeletelt hangcsatornákhoz.Modul 2: OCR és Valós Idejű Játék-Metaadat ExtrakcióCél: A képernyő sarkában lévő statisztikák (óra, negyed, eredmény, down & distance) valós idejű kitermelése.Technológiai stack: PyTesseract vagy EasyOCR, OpenCV (Crop & Thresholding).Részletes feladatok:ROI (Region of Interest) Maszkolás: Mivel a scoreboard mindig ugyanazon a helyen van, definiálni kell egy fix maszkot, ami levágja a képernyő lényegtelen részeit.Időszakos ütemezés: Nem kell minden egyes keretet OCR-ezni (erőforrás-pazarlás lenne); elég minden 1. vagy 2. másodpercben egy frame-et elemezni, amíg az óra fut, vagy váltást keresni a vizuális tartalomban.Strukturált JSON kimenet: A kinyert adatokat (pl. Q3, 04:12, 2nd & 5, AWAY 14 - HOME 21) be kell lökni egy nfl.metadata Kafka topicra.Modul 3: Computer Vision & Taktikai Elemző (Pre/Post-Snap & Tracking)Cél: A játékosok helyzetének követése, a formációk felismerése (Cover 1, Cover 3, Blitz) és a pre-snap / post-snap változások detektálása.Technológiai stack: PyTorch, YOLOv8/YOLOv10 (objektumdetekcióra és trackingre), OpenCV, Graph Neural Networks (GNN) vagy egyszerű spatial-temporal feature extractor.Részletes feladatok:Fine-Tuning: A YOLO modell betanítása/finomhangolása játékosok, bírók és a labda detektálására NFL videókon.Pálya-homográfia (Homography Matrix): Az OpenCV segítségével a kamera 2D-s képpontjait le kell képezni egy szabványos amerikai futballpálya koordináta-rendszerére (hasonlóan a Big Data Bowl adataihoz), hogy mérhetőek legyenek a távolságok.Formáció Osztályozás: Egy PyTorch modell építése, amely a snap előtti pillanatban a játékosok térbeli elhelyezkedése alapján besorolja a formációt (pl. Shotgun, I-Form) és a védelmi felállást. A snap utáni mozgásvektorokból pedig detektálja, ha a védelem eltolódik (disguised coverage).Modul 4: Multimodális Highlight Generator (Audió + Vizuális fúzió)Cél: Az izgalmas pillanatok (touchdown, interception, sack) automatikus felismerése és klipként való mentése.Technológiai stack: Whisper (opcionális kommentár elemzéshez), torokhang/tömegmoraj amplitúdó-analízis (librosa), FFmpeg (vágás).Részletes feladatok:Audio Trigger: Valós idejű RMS (Root Mean Square) energia számítás a hangfolyamon. Ha a hangerő/frekvencia egy küszöbértéket átlép (hirtelen felordít a közönség), az egy potenciális "hightlight event".Vizuális Megerősítés: Az OCR-en vagy a bírói kézmozdulaton (pl. mindkét kéz a magasban TD esetén) keresztül érkező vizuális jel megerősíti az audió triggert.Automatikus Vágás: Ha a duális trigger aktiválódik, az FFmpeg segítségével a rendszer automatikusan kivágja az esemény előtti 15 másodpercet és utáni 20 másodpercet, majd elmenti egy highlights/ könyvtárba.Modul 5: Az nflverse Integráció & Prediktív Motor (The Brain)Cél: A statisztikai háttér biztosítása, a történelmi adatok lekérdezése és a valós idejű győzelmi esély (Win Probability) és játék-ajánló (AI Offensive Coordinator) kiszámítása.Technológiai stack: Python, Pandas, scikit-learn / XGBoost, nflverse-pbp adatok.Részletes feladatok:Adatbázis Előkészítés: A nflverse/nflverse-pbp repóból letölteni az elmúlt évek play-by-play adatait, tisztítani Pandas-szal, és betölteni egy helyi PostgreSQL / DuckDB adatbázisba.Win Probability Modell: Egy XGBoost modell betanítása az nflverse adatok alapján, amelynek bemenetei: aktuális negyed, hátralévő idő, pontkülönbség, down, distance, yardline, timeoutok száma.Valós Idejű Fúzió: Amikor a 2-es Modul (OCR) beküldi az aktuális helyzetet, a modell azonnal kiszámítja az aktuális győzelmi esélyt, anélkül, hogy külső API-ra kellene várni.AI Scouting Assistant (RAG / Query Engine): Egy LLM vagy strukturált query interface építése az nflverse adatokra, hogy olyan kérdésekre is válaszoljon a rendszer élőben, mint: "Mit szokott ez a csapat végezni 3rd and shorthelyzetben, ha vezetnek?"3. Fejlesztési Fázisok és ÜtemtervA projekt mérete miatt szigorúan iteratívan, fázisról fázisra érdemes haladni:1. Fázis: Az Alapok (Statisztikai Agy)Cél: nflverse pbp adatok letöltése, DuckDB beállítás, alapszintű Win Probability modell scikit-learn-nel.Mérföldkő: Képes vagy historikus adatok alapján megmondani egy adott helyzet győzelmi esélyét.2. Fázis: A Vizuális Ingesztció és OCRCél: Egy rögzített NFL meccs videófájl (vagy rövid stream chunk) betáplálása OpenCV-be, OCR pipeline felépítése a scoreboard olvasására.Mérföldkő: A kód kiolvassa a képernyőről az időt és az eredményt, és kiírja konzolra.3. Fázis: Objektumdetekció és Tracking (YOLO)Cél: Játékosok felismerése a videón, bounding boxok rajzolása, alapvető formáció-kategorizálás.Mérföldkő: A rendszer megkülönbözteti a támadókat és a védőket a snap előtt.4. Fázis: Highlight Generator & Automatikus VágásCél: Hang-alapú triggerek és FFmpeg integráció.Mérföldkő: Touchdown esetén a rendszer automatikusan kigyárt egy 35 másodperces videóklipet.5. Fázis: Kafka Streaming & Végső IntegrációCél: Az egységesítés. Minden modul Docker konténerbe kerül, a Kafka csatornák összekötik a streamet a CV-vel, az OCR-rel és az nflverse motorral. Egy Streamlit vagy FastAPI alapú webes felületen élőben láthatóvá válnak az elemzések.4. Ajánlott Technológiai Könyvtárak & KeretrendszerekKomponensHasznált Eszközök / KönyvtárakVideókezelés & Streamopencv-python, ffmpeg-pythonÜzenetközvetítéskafka-python, Apache Kafka (Docker)Computer Visionultralytics (YOLOv8/v10), torch, torchvisionOCReasyocr vagy pytesseractAdattudomány & MLpandas, numpy, scikit-learn, xgboost, duckdbAdatforrásnflverse-pbp (GitHub / parquet fájlok)UI / DashboardStreamlit (gyors prototípushoz) vagy FastAPI + React
+
+
+Íme a teljes, strukturált link- és forrásgyűjtemény a fejlesztő agent számára, amely magába foglalja az összes hivatalos adathalmazt, dokumentációt és a megadott teszt-streamet is:
+
+1. Adatforrások és Repozitóriumok (nflverse)
+nflverse Play-by-Play (PBP) Adatbázis:
+
+GitHub Repó: https://github.com/nflverse/nflverse-pbp
+
+Főoldal / Adatforrások: https://nflverse.nflverse.com/
+
+nflverse Data repó: https://github.com/nflverse/nflverse-data
+
+Next Gen Stats (NGS) adatok: https://github.com/nflverse/ngs-data
+
+2. Kaggle Adatbázisok (Player Tracking & Behavior)
+NFL Big Data Bowl 2026 (Játékosmozgás elemzés):
+
+Kaggle Link: https://www.kaggle.com/competitions/nfl-big-data-bowl-2026-analytics/data
+
+NFL Big Data Bowl 2025 (Pre-snap játékosviselkedés):
+
+Kaggle Link: https://www.kaggle.com/competitions/nfl-big-data-bowl-2025/data
+
+3. Projekt Koncepciók és Dokumentáció
+Eredeti Projekt Ötlet Dokumentum (ethandojo):
+
+Google Docs / Mobilbasic verzió: https://docs.google.com/document/d/1HbRCu9Hm-APHoJsdDm4uu6afHBvFL7PrrPfOVPHc6ck/mobilebasic
+
+4. Teszt Live Stream Forrás
+YouTube Live Stream / Videó Példa a Teszteléshez:
+
+YouTube Link: https://youtu.be/0iZSW6aAhNA (NFL Throwback – Best Games in NFL History Station)
+
+Ezzel a linkkészlettel a fejlesztő agent közvetlenül hozzáférhet a statisztikai adatokhoz, a Kaggle-pályázatok mintáihoz, a módszertani leírásokhoz és a teszteléshez szükséges videófolyamhoz is.

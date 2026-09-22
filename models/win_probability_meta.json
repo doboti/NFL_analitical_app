@@ -1,0 +1,22 @@
+{
+  "features": [
+    "qtr",
+    "down",
+    "ydstogo",
+    "yardline_100",
+    "score_differential",
+    "half_seconds_remaining",
+    "game_seconds_remaining",
+    "posteam_timeouts_remaining",
+    "defteam_timeouts_remaining",
+    "is_home"
+  ],
+  "test_season": 2024,
+  "metrics": {
+    "accuracy": 0.7484486249918348,
+    "log_loss": 0.46362069249153137,
+    "brier_score": 0.15745317935943604
+  },
+  "train_rows": 225735,
+  "test_rows": 45927
+}

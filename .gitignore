@@ -1,0 +1,21 @@
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.pt
+
+# Nagy bináris/generált fájlok - könnyen újra letölthetők/generálhatók
+tools/*.exe
+data/video/*.mp4
+data/video/*.wav
+data/highlights/*.mp4
+data/reference/*.png
+data/*.parquet
+data/ocr_output.jsonl
+data/fusion_output.jsonl
+data/detections.json
+data/detections_annotated.png
+
+runs/
+*.log
+.streamlit/

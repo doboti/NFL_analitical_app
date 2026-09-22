@@ -1,0 +1,10 @@
+opencv-python-headless
+numpy
+pandas
+xgboost
+kafka-python
+librosa
+soundfile
+streamlit
+ultralytics
+easyocr
