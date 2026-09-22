@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 .pytest_cache/
 *.pt
+.claude/
 
 # Nagy bináris/generált fájlok - könnyen újra letölthetők/generálhatók
 tools/*.exe
