@@ -17,7 +17,6 @@ from pathlib import Path
 from typing import Optional
 
 import cv2
-import easyocr
 import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -146,6 +145,9 @@ def parse_ocr_tokens(tokens: list[tuple]) -> ScoreboardState:
 
 class ScoreboardReader:
     def __init__(self, roi=SCOREBOARD_ROI, scale=UPSCALE_FACTOR):
+        import easyocr  # lusta import: a tiszta parszoló logika (pl. tesztekhez)
+        # ne igényelje az easyocr+torch telepítését, csak ha ténylegesen OCR-ezünk.
+
         self.roi = roi
         self.scale = scale
         self.reader = easyocr.Reader(["en"], gpu=False, verbose=False)

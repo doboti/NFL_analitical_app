@@ -1,3 +1,19 @@
+# Minden Python szolgáltatás ugyanazt a Dockerfile-t/tartalmat építi -
+# az x-app horgony (anchor) biztosítja, hogy egyetlen közös image ("nflapp-app")
+# épüljön fel egyszer, és minden szolgáltatás azt használja újra (más command-dal
+# indítva). Enélkül a docker-compose 6 KÜLÖN, egyenként ~4GB-os image-et
+# építene (torch/easyocr/ultralytics minden image-ben duplikálva) - ez kb.
+# 24GB felesleges lemezterületet jelentett, és CI futtatókon (jellemzően
+# ~14GB szabad hely) el is fogyaszthatta volna a rendelkezésre álló helyet.
+x-app: &app
+  build: .
+  image: nflapp-app:latest
+  restart: unless-stopped
+  environment: &app-env
+    KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  depends_on:
+    - kafka
+
 services:
   kafka:
     image: apache/kafka:3.7.0
@@ -17,75 +33,51 @@ services:
       CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
 
   ingestion:
-    build: .
+    <<: *app
     container_name: nflapp-ingestion
-    restart: unless-stopped
     command: python ingestion_service.py
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      <<: *app-env
       VIDEO_PATH: /app/data/video/test_clip_av.mp4
       PLAYBACK_SPEED: "4.0"
       LOOP: "true"
     volumes:
       - ./data:/app/data
-    depends_on:
-      - kafka
 
   ocr_service:
-    build: .
+    <<: *app
     container_name: nflapp-ocr
-    restart: unless-stopped
     command: python ocr_service.py
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    depends_on:
-      - kafka
 
   detection_service:
-    build: .
+    <<: *app
     container_name: nflapp-detection
-    restart: unless-stopped
     command: python detection_service.py
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      <<: *app-env
       AWAY_TEAM: PHI
       HOME_TEAM: NYG
       POSTEAM: NYG
       DETECTION_STRIDE: "3"
-    depends_on:
-      - kafka
 
   fusion_service:
-    build: .
+    <<: *app
     container_name: nflapp-fusion
-    restart: unless-stopped
     command: python fusion_service.py
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    depends_on:
-      - kafka
 
   highlight_service:
-    build: .
+    <<: *app
     container_name: nflapp-highlight
-    restart: unless-stopped
     command: python highlight_service.py
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      <<: *app-env
       VIDEO_PATH: /app/data/video/test_clip_av.mp4
     volumes:
       - ./data:/app/data
-    depends_on:
-      - kafka
 
   dashboard:
-    build: .
+    <<: *app
     container_name: nflapp-dashboard
-    restart: unless-stopped
     command: streamlit run dashboard_service.py --server.address 0.0.0.0 --server.port 8501
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     ports:
       - "8501:8501"
-    depends_on:
-      - kafka

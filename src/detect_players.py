@@ -18,19 +18,23 @@ fekete-fehér mezéről kiszűrhető lenne (nem illeszkedik egyik csapatszínre
 sem), ezért alacsony színegyezési biztonságnál a játékos "unknown"
 címkét kap ahelyett, hogy erőltetnénk a csapatba sorolást.
 """
+from __future__ import annotations
+
 import json
 import sys
 from dataclasses import asdict, dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 import cv2
 import numpy as np
 import pandas as pd
-from ultralytics import YOLO
 
 from homography import FieldHomography, HOMOGRAPHY_PATH
+
+if TYPE_CHECKING:
+    from ultralytics import YOLO
 
 ROOT = Path(__file__).resolve().parent.parent
 TEAM_COLORS_CSV = ROOT / "data" / "team_colors.csv"
@@ -170,6 +174,8 @@ def draw_annotated(frame: np.ndarray, detections: list[PlayerDetection]) -> np.n
 
 
 def main():
+    from ultralytics import YOLO  # lusta import, lásd a fájl elején lévő megjegyzést
+
     frame_path = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "data" / "reference" / "calibration_frame.png"
     away_team = sys.argv[2] if len(sys.argv) > 2 else "CLE"
     home_team = sys.argv[3] if len(sys.argv) > 3 else "NE"

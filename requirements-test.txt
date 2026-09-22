@@ -1,0 +1,6 @@
+pytest
+numpy
+pandas
+opencv-python-headless
+xgboost
+kafka-python
