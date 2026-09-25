@@ -2,9 +2,38 @@
 import sys
 from pathlib import Path
 
+import numpy as np
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from ocr_scoreboard import parse_ocr_tokens  # noqa: E402
+from ocr_scoreboard import REFERENCE_RESOLUTION, SCOREBOARD_ROI, crop_and_upscale, parse_ocr_tokens  # noqa: E402
+
+
+def test_crop_and_upscale_scales_roi_to_actual_frame_size():
+    """Regresszió-teszt: amikor a frame nem a kalibrációs (1280x720) felbontású
+    (pl. egy alacsonyabb felbontású élő stream miatt), a ROI-nak arányosan kell
+    skálázódnia, különben a kivágás üres lesz / kicsúszik a képből (lásd az
+    élő módban ténylegesen előfordult OpenCV 'ssize.empty()' hibát)."""
+    ref_w, ref_h = REFERENCE_RESOLUTION
+    full_res_frame = np.zeros((ref_h, ref_w, 3), dtype=np.uint8)
+    crop_full = crop_and_upscale(full_res_frame)
+    assert crop_full.size > 0
+
+    half_res_frame = np.zeros((ref_h // 2, ref_w // 2, 3), dtype=np.uint8)
+    crop_half = crop_and_upscale(half_res_frame)
+    assert crop_half.size > 0
+    # a kivágásnak kb. feleakkorának kell lennie (upscale előtt), mint a teljes felbontásún
+    x1, y1, x2, y2 = SCOREBOARD_ROI
+    assert crop_half.shape[1] < crop_full.shape[1]
+    assert crop_half.shape[0] < crop_full.shape[0]
+
+
+def test_crop_and_upscale_empty_when_frame_too_short_for_roi():
+    # Az arányosan lefelé skálázott ROI ennél a magasságnál (5px) 0 magasságú
+    # kivágást ad - ezt kezelnie kell hiba nélkül, üres tömböt visszaadva.
+    tiny_frame = np.zeros((5, 1280, 3), dtype=np.uint8)
+    crop = crop_and_upscale(tiny_frame)
+    assert crop.size == 0
 
 
 def test_cbs_style_single_token_scoreboard():

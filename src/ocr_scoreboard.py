@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # Megjegyzés: ez a klip-specifikus érték a jelenleg letöltött adáshoz igazítva
 # (alsó sáv, NBC-stílus) - más adásnál (pl. felső sáv, CBS-stílus) újra kell
 # kalibrálni, lásd a Modul 2 dokumentációját a fájl elején.
+REFERENCE_RESOLUTION = (1280, 720)  # a fenti ROI ehhez a felbontáshoz van kalibrálva
 SCOREBOARD_ROI = (180, 635, 1080, 675)
 UPSCALE_FACTOR = 3
 SAMPLE_INTERVAL_SEC = 1.0
@@ -62,8 +63,23 @@ def _ordinal_to_number(ordinal: str) -> Optional[int]:
 
 
 def crop_and_upscale(frame: np.ndarray, roi=SCOREBOARD_ROI, scale=UPSCALE_FACTOR) -> np.ndarray:
+    """A roi a REFERENCE_RESOLUTION-höz van kalibrálva - ha a frame ettől eltérő
+    felbontású (pl. az élő stream alacsonyabb felbontású formátumot ad, CPU-
+    kímélés miatt), a ROI-t arányosan átskálázzuk a frame tényleges méretéhez,
+    hogy ne csússzon ki a képből / ne váljon üressé a kivágás."""
+    frame_h, frame_w = frame.shape[:2]
+    ref_w, ref_h = REFERENCE_RESOLUTION
+    sx, sy = frame_w / ref_w, frame_h / ref_h
+
     x1, y1, x2, y2 = roi
+    x1, x2 = int(x1 * sx), int(x2 * sx)
+    y1, y2 = int(y1 * sy), int(y2 * sy)
+    x1, y1 = max(0, x1), max(0, y1)
+    x2, y2 = min(frame_w, x2), min(frame_h, y2)
+
     crop = frame[y1:y2, x1:x2]
+    if crop.size == 0:
+        return crop
     h, w = crop.shape[:2]
     return cv2.resize(crop, (w * scale, h * scale), interpolation=cv2.INTER_LANCZOS4)
 
@@ -154,6 +170,8 @@ class ScoreboardReader:
 
     def read_frame(self, frame: np.ndarray, timestamp_sec: float) -> ScoreboardState:
         crop = crop_and_upscale(frame, self.roi, self.scale)
+        if crop.size == 0:
+            return ScoreboardState(timestamp_sec=round(timestamp_sec, 2), raw_text="")
         results = self.reader.readtext(crop)
         tokens = [(bbox[0][0], text, conf) for bbox, text, conf in results]
         state = parse_ocr_tokens(tokens)

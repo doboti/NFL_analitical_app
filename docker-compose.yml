@@ -11,6 +11,20 @@ x-app: &app
   restart: unless-stopped
   environment: &app-env
     KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    # STREAM_MODE=file (alap): egy helyi tesztklipet ismétel (megbízható, ez fut CI-ben is).
+    # STREAM_MODE=live: valódi élő YouTube HLS-adatfolyamot dolgoz fel folyamatosan -
+    # induláshoz: `STREAM_MODE=live docker compose up -d` (lásd README).
+    STREAM_MODE: ${STREAM_MODE:-file}
+    LIVE_URL: ${LIVE_URL:-https://youtu.be/0iZSW6aAhNA}
+    # A torch/OpenCV/BLAS könyvtárak alapból MINDEN elérhető magot lefoglalnak
+    # egyetlen hívásra is - 8 magos gépen ez önmagában ~350%+ CPU-t okozott a
+    # OCR/detection szolgáltatásoknál. Ezzel minden szolgáltatás max 2 szálat
+    # használ egyszerre - a hat konténer együtt így sem lépi túl a gép magjait.
+    OMP_NUM_THREADS: "2"
+    MKL_NUM_THREADS: "2"
+    OPENBLAS_NUM_THREADS: "2"
+    NUMEXPR_NUM_THREADS: "2"
+    OPENCV_NUM_THREADS: "2"
   depends_on:
     - kafka
 
@@ -19,6 +33,11 @@ services:
     image: apache/kafka:3.7.0
     container_name: nflapp-kafka
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1.5G
     ports:
       - "9094:9092"
     environment:
@@ -36,6 +55,11 @@ services:
     <<: *app
     container_name: nflapp-ingestion
     command: python ingestion_service.py
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1G
     environment:
       <<: *app-env
       VIDEO_PATH: /app/data/video/test_clip_av.mp4
@@ -48,11 +72,24 @@ services:
     <<: *app
     container_name: nflapp-ocr
     command: python ocr_service.py
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+    environment:
+      <<: *app-env
+      OCR_STRIDE: "2"
 
   detection_service:
     <<: *app
     container_name: nflapp-detection
     command: python detection_service.py
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
     environment:
       <<: *app-env
       AWAY_TEAM: PHI
@@ -64,14 +101,21 @@ services:
     <<: *app
     container_name: nflapp-fusion
     command: python fusion_service.py
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
 
   highlight_service:
     <<: *app
     container_name: nflapp-highlight
     command: python highlight_service.py
-    environment:
-      <<: *app-env
-      VIDEO_PATH: /app/data/video/test_clip_av.mp4
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
     volumes:
       - ./data:/app/data
 
@@ -79,5 +123,10 @@ services:
     <<: *app
     container_name: nflapp-dashboard
     command: streamlit run dashboard_service.py --server.address 0.0.0.0 --server.port 8501
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
     ports:
       - "8501:8501"

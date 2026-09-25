@@ -134,12 +134,17 @@ def detect_and_classify(
     swatches = load_team_swatches([away_team, home_team])
     results = model.predict(source=frame, classes=[0], conf=0.25, verbose=False)[0]
 
+    # FIELD_Y_MIN a 720p-s referenciafelbontáshoz van kalibrálva - ha a frame
+    # ettől eltérő magasságú (pl. alacsonyabb felbontású élő stream), arányosan
+    # átskálázzuk, különben rossz (túl sok/kevés) játékos esne ki a szűrőn.
+    field_y_min = FIELD_Y_MIN * (frame.shape[0] / 720)
+
     detections = []
     for box in results.boxes:
         bbox = box.xyxy[0].tolist()
         conf = float(box.conf[0])
         _, y1, _, y2 = bbox
-        if (y1 + y2) / 2 < FIELD_Y_MIN:
+        if (y1 + y2) / 2 < field_y_min:
             continue  # oldalvonali személyzet, nem játékos a pályán
 
         hue = dominant_team_hue(frame, bbox)

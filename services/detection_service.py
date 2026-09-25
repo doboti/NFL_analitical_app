@@ -10,7 +10,14 @@ from dataclasses import asdict
 from pathlib import Path
 
 import cv2
+
+cv2.setNumThreads(int(os.environ.get("OPENCV_NUM_THREADS", "2")))
+
 import numpy as np
+import torch
+
+torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "2")))
+
 from ultralytics import YOLO
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
