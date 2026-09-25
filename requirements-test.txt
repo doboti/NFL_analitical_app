@@ -4,3 +4,6 @@ pandas
 opencv-python-headless
 xgboost
 kafka-python
+scikit-learn
+duckdb
+pyarrow

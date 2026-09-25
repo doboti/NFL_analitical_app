@@ -11,12 +11,12 @@
     "defteam_timeouts_remaining",
     "is_home"
   ],
-  "test_season": 2024,
+  "test_season": 2025,
   "metrics": {
-    "accuracy": 0.7484486249918348,
-    "log_loss": 0.46362069249153137,
-    "brier_score": 0.15745317935943604
+    "accuracy": 0.7302906408319261,
+    "log_loss": 0.5106953978538513,
+    "brier_score": 0.17258062958717346
   },
-  "train_rows": 225735,
-  "test_rows": 45927
+  "train_rows": 276920,
+  "test_rows": 45004
 }

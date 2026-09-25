@@ -26,7 +26,7 @@ FEATURES = [
     "is_home",
 ]
 
-TEST_SEASON = 2024
+TEST_SEASON = 2025  # 2026 még csak részszezon (3 hét) - nem alkalmas tesztkészletnek
 
 
 def load_data() -> pd.DataFrame:

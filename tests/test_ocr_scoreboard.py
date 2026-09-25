@@ -94,6 +94,39 @@ def test_ordinal_ocr_noise_still_matches_via_fuzzy():
     assert state2.distance == 7
 
 
+def test_single_recognized_team_assigned_to_correct_side_by_score_position():
+    """Regressziós teszt: élesben előfordult, hogy csak EGY csapatkódot
+    (a jobb oldali, home csapatot) ismerte fel az OCR, és a régi logika ezt
+    tévesen mindig 'away'-ként rögzítette, a home_team None maradt - a
+    dashboard scoreboard fejléce ekkor rossz csapatot/szín-t mutatott.
+    Most a felismert csapatnak a HOZZÁ KÖZELEBBI eredmény-pozíció alapján
+    kell a helyes oldalra (home) kerülnie."""
+    tokens = [
+        (300.0, "1&10", 0.8),
+        (450.0, "35", 1.0),   # bal oldali (away) eredmény - NYG csapatkódja nem ismerődött fel
+        (900.0, "DAL", 0.95),  # jobb oldali (home) csapatkód, sikeresen felismerve
+        (950.0, "44", 1.0),   # jobb oldali (home) eredmény, közel a DAL-hoz
+    ]
+    state = parse_ocr_tokens(tokens)
+    assert state.home_team == "DAL"
+    assert state.away_team is None
+    assert state.away_score == 35
+    assert state.home_score == 44
+
+
+def test_single_recognized_team_assigned_to_away_when_closer_to_left_score():
+    tokens = [
+        (100.0, "NYG", 0.95),  # bal oldali (away) csapatkód, felismerve
+        (150.0, "35", 1.0),    # bal oldali (away) eredmény, közel az NYG-hez
+        (600.0, "44", 1.0),    # jobb oldali (home) eredmény - DAL kódja nem ismerődött fel
+    ]
+    state = parse_ocr_tokens(tokens)
+    assert state.away_team == "NYG"
+    assert state.home_team is None
+    assert state.away_score == 35
+    assert state.home_score == 44
+
+
 def test_missing_fields_stay_none():
     tokens = [(100.0, "NFL", 0.9), (200.0, "CBS", 0.9)]
     state = parse_ocr_tokens(tokens)

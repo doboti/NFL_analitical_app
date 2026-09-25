@@ -1,0 +1,786 @@
+[
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "CLE",
+    "away_team": "PIT",
+    "home_win_prob": 0.0983,
+    "home_starter": {
+      "name": "D.Watson",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "A.Rodgers",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 193.75930786132812,
+        "rushing_yards": 123.44127655029297,
+        "sacks_taken": 2.318028688430786
+      },
+      "away": {
+        "passing_yards": 224.56687927246094,
+        "rushing_yards": 157.63717651367188,
+        "sacks_taken": 1.8380663394927979
+      }
+    },
+    "reasons": [
+      {
+        "text": "az ellenfél-korrigált támadó hatékonyság különbsége - erősen PIT felé billenti az esélyt",
+        "contribution": -0.6873027086257935
+      },
+      {
+        "text": "CLE: a passz-védekezés elmúlt formája - erősen PIT felé billenti az esélyt",
+        "contribution": -0.2869149446487427
+      },
+      {
+        "text": "CLE: az irányító időjárás-kondicionált EPA-hatékonysága - erősen PIT felé billenti az esélyt",
+        "contribution": -0.26272648572921753
+      },
+      {
+        "text": "CLE: az ellenfél-korrigált támadó hatékonyság - erősen PIT felé billenti az esélyt",
+        "contribution": -0.22676968574523926
+      },
+      {
+        "text": "PIT: a csapat összesített sérülés-terhe - erősen PIT felé billenti az esélyt",
+        "contribution": -0.19773289561271667
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "WAS",
+    "away_team": "IND",
+    "home_win_prob": 0.5393,
+    "home_starter": {
+      "name": "J.Daniels",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "D.Jones",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 238.163818359375,
+        "rushing_yards": 117.87822723388672,
+        "sacks_taken": 2.3106348514556885
+      },
+      "away": {
+        "passing_yards": 244.67149353027344,
+        "rushing_yards": 127.48645782470703,
+        "sacks_taken": 1.5977245569229126
+      }
+    },
+    "reasons": [
+      {
+        "text": "az ellenfél-korrigált támadó hatékonyság különbsége - erősen IND felé billenti az esélyt",
+        "contribution": -0.3070506751537323
+      },
+      {
+        "text": "IND: a csapat összesített sérülés-terhe - erősen IND felé billenti az esélyt",
+        "contribution": -0.15911585092544556
+      },
+      {
+        "text": "IND: az irányító időjárás-kondicionált EPA-hatékonysága - erősen WAS felé billenti az esélyt",
+        "contribution": 0.12823569774627686
+      },
+      {
+        "text": "az irányító időjárás-kondicionált EPA-hatékonysága különbsége - erősen WAS felé billenti az esélyt",
+        "contribution": 0.10046908259391785
+      },
+      {
+        "text": "WAS: az irányító célzási pontossága (CPOE) ilyen időjárásban - enyhén IND felé billenti az esélyt",
+        "contribution": -0.08335673809051514
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "BAL",
+    "away_team": "TEN",
+    "home_win_prob": 0.9304,
+    "home_starter": {
+      "name": "L.Jackson",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "C.Ward",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 264.0235900878906,
+        "rushing_yards": 159.8712921142578,
+        "sacks_taken": 1.6149049997329712
+      },
+      "away": {
+        "passing_yards": 209.35887145996094,
+        "rushing_yards": 110.58690643310547,
+        "sacks_taken": 2.698437213897705
+      }
+    },
+    "reasons": [
+      {
+        "text": "a korai down (1-2. down) siker-arány különbsége - erősen BAL felé billenti az esélyt",
+        "contribution": 0.7401490211486816
+      },
+      {
+        "text": "a passzjáték elmúlt formája (EPA/play) különbsége - erősen BAL felé billenti az esélyt",
+        "contribution": 0.3986027240753174
+      },
+      {
+        "text": "az ellenfél-korrigált támadó hatékonyság különbsége - erősen BAL felé billenti az esélyt",
+        "contribution": 0.23521721363067627
+      },
+      {
+        "text": "TEN: a csapat összesített sérülés-terhe - erősen TEN felé billenti az esélyt",
+        "contribution": -0.17511895298957825
+      },
+      {
+        "text": "BAL: a futójáték elmúlt formája (EPA/play) - erősen BAL felé billenti az esélyt",
+        "contribution": 0.1649194061756134
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "BUF",
+    "away_team": "NE",
+    "home_win_prob": 0.7076,
+    "home_starter": {
+      "name": "J.Allen",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "D.Maye",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 257.2198486328125,
+        "rushing_yards": 130.49530029296875,
+        "sacks_taken": 2.8770220279693604
+      },
+      "away": {
+        "passing_yards": 212.72470092773438,
+        "rushing_yards": 121.36311340332031,
+        "sacks_taken": 2.8580286502838135
+      }
+    },
+    "reasons": [
+      {
+        "text": "az ellenfél-korrigált támadó hatékonyság különbsége - erősen BUF felé billenti az esélyt",
+        "contribution": 0.34787893295288086
+      },
+      {
+        "text": "a passzjáték elmúlt formája (EPA/play) különbsége - erősen BUF felé billenti az esélyt",
+        "contribution": 0.34341874718666077
+      },
+      {
+        "text": "NE: a csapat összesített sérülés-terhe - erősen NE felé billenti az esélyt",
+        "contribution": -0.19802914559841156
+      },
+      {
+        "text": "BUF: az ellenfél-korrigált támadó hatékonyság - erősen BUF felé billenti az esélyt",
+        "contribution": 0.1765509396791458
+      },
+      {
+        "text": "BUF: a futójáték elmúlt formája (EPA/play) - erősen BUF felé billenti az esélyt",
+        "contribution": 0.1299542635679245
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "CHI",
+    "away_team": "NYJ",
+    "home_win_prob": 0.6777,
+    "home_starter": {
+      "name": "C.Williams",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "G.Smith",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 243.51937866210938,
+        "rushing_yards": 142.17066955566406,
+        "sacks_taken": 2.0000174045562744
+      },
+      "away": {
+        "passing_yards": 215.36444091796875,
+        "rushing_yards": 107.68041229248047,
+        "sacks_taken": 2.2882628440856934
+      }
+    },
+    "reasons": [
+      {
+        "text": "az ellenfél-korrigált védekező hatékonyság különbsége - erősen CHI felé billenti az esélyt",
+        "contribution": 0.18526846170425415
+      },
+      {
+        "text": "NYJ: az irányító időjárás-kondicionált EPA-hatékonysága - erősen CHI felé billenti az esélyt",
+        "contribution": 0.16218802332878113
+      },
+      {
+        "text": "az ellenfél-korrigált támadó hatékonyság különbsége - erősen CHI felé billenti az esélyt",
+        "contribution": 0.15819330513477325
+      },
+      {
+        "text": "CHI: az irányító célzási pontossága (CPOE) ilyen időjárásban - erősen NYJ felé billenti az esélyt",
+        "contribution": -0.12285908311605453
+      },
+      {
+        "text": "NYJ: a futójáték elmúlt formája (EPA/play) - erősen CHI felé billenti az esélyt",
+        "contribution": 0.11476268619298935
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "CIN",
+    "away_team": "JAX",
+    "home_win_prob": 0.2533,
+    "home_starter": {
+      "name": "J.Burrow",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "T.Lawrence",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 245.33511352539062,
+        "rushing_yards": 117.66346740722656,
+        "sacks_taken": 2.7840874195098877
+      },
+      "away": {
+        "passing_yards": 256.0885009765625,
+        "rushing_yards": 118.26811218261719,
+        "sacks_taken": 2.3315775394439697
+      }
+    },
+    "reasons": [
+      {
+        "text": "az ellenfél-korrigált védekező hatékonyság különbsége - erősen JAX felé billenti az esélyt",
+        "contribution": -0.3966555595397949
+      },
+      {
+        "text": "JAX: az ellenfél-korrigált védekező hatékonyság - erősen JAX felé billenti az esélyt",
+        "contribution": -0.3082704246044159
+      },
+      {
+        "text": "az ellenfél-korrigált támadó hatékonyság különbsége - erősen JAX felé billenti az esélyt",
+        "contribution": -0.19407407939434052
+      },
+      {
+        "text": "JAX: a csapat összesített sérülés-terhe - erősen JAX felé billenti az esélyt",
+        "contribution": -0.1765236258506775
+      },
+      {
+        "text": "JAX: a korai down (1-2. down) siker-arány - erősen JAX felé billenti az esélyt",
+        "contribution": -0.14098799228668213
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "HOU",
+    "away_team": "DAL",
+    "home_win_prob": 0.2857,
+    "home_starter": {
+      "name": "C.Stroud",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "D.Prescott",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 270.5845947265625,
+        "rushing_yards": 116.57766723632812,
+        "sacks_taken": 1.740988850593567
+      },
+      "away": {
+        "passing_yards": 267.68817138671875,
+        "rushing_yards": 77.92244720458984,
+        "sacks_taken": 2.5411365032196045
+      }
+    },
+    "reasons": [
+      {
+        "text": "az ellenfél-korrigált támadó hatékonyság különbsége - erősen DAL felé billenti az esélyt",
+        "contribution": -0.4763749837875366
+      },
+      {
+        "text": "HOU: a fut-védekezés elmúlt formája - erősen DAL felé billenti az esélyt",
+        "contribution": -0.1807660460472107
+      },
+      {
+        "text": "DAL: az irányító időjárás-kondicionált EPA-hatékonysága - erősen HOU felé billenti az esélyt",
+        "contribution": 0.16320635378360748
+      },
+      {
+        "text": "az irányító célzási pontossága (CPOE) ilyen időjárásban különbsége - erősen DAL felé billenti az esélyt",
+        "contribution": -0.15220333635807037
+      },
+      {
+        "text": "DAL: a csapat összesített sérülés-terhe - erősen DAL felé billenti az esélyt",
+        "contribution": -0.11839284002780914
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "NYG",
+    "away_team": "ARI",
+    "home_win_prob": 0.7048,
+    "home_starter": {
+      "name": "J.Winston",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "J.Brissett",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 266.0765380859375,
+        "rushing_yards": 108.99646759033203,
+        "sacks_taken": 2.2692675590515137
+      },
+      "away": {
+        "passing_yards": 244.26934814453125,
+        "rushing_yards": 98.71769714355469,
+        "sacks_taken": 2.563019037246704
+      }
+    },
+    "reasons": [
+      {
+        "text": "ARI: az irányító időjárás-kondicionált EPA-hatékonysága - erősen NYG felé billenti az esélyt",
+        "contribution": 0.1601177603006363
+      },
+      {
+        "text": "az irányító időjárás-kondicionált EPA-hatékonysága különbsége - erősen NYG felé billenti az esélyt",
+        "contribution": 0.12335257232189178
+      },
+      {
+        "text": "a futójáték elmúlt formája (EPA/play) különbsége - enyhén NYG felé billenti az esélyt",
+        "contribution": 0.09492209553718567
+      },
+      {
+        "text": "az ellenfél-korrigált védekező hatékonyság különbsége - enyhén NYG felé billenti az esélyt",
+        "contribution": 0.08203397691249847
+      },
+      {
+        "text": "ARI: a csapat összesített sérülés-terhe - enyhén ARI felé billenti az esélyt",
+        "contribution": -0.07932445406913757
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "PHI",
+    "away_team": "LA",
+    "home_win_prob": 0.4355,
+    "home_starter": {
+      "name": "J.Hurts",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "M.Stafford",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 249.96881103515625,
+        "rushing_yards": 106.65518188476562,
+        "sacks_taken": 2.9667675495147705
+      },
+      "away": {
+        "passing_yards": 276.4809265136719,
+        "rushing_yards": 103.26258850097656,
+        "sacks_taken": 1.7564609050750732
+      }
+    },
+    "reasons": [
+      {
+        "text": "az ellenfél-korrigált támadó hatékonyság különbsége - erősen LA felé billenti az esélyt",
+        "contribution": -0.610966145992279
+      },
+      {
+        "text": "PHI: az ellenfél-korrigált védekező hatékonyság - erősen PHI felé billenti az esélyt",
+        "contribution": 0.2309194952249527
+      },
+      {
+        "text": "LA: a csapat összesített sérülés-terhe - erősen LA felé billenti az esélyt",
+        "contribution": -0.19762550294399261
+      },
+      {
+        "text": "LA: az ellenfél-korrigált védekező hatékonyság - erősen LA felé billenti az esélyt",
+        "contribution": -0.1511499285697937
+      },
+      {
+        "text": "PHI: a korai down (1-2. down) siker-arány - enyhén PHI felé billenti az esélyt",
+        "contribution": 0.08247386664152145
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "TB",
+    "away_team": "GB",
+    "home_win_prob": 0.5845,
+    "home_starter": {
+      "name": "B.Mayfield",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "J.Love",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 209.45095825195312,
+        "rushing_yards": 127.74964141845703,
+        "sacks_taken": 2.289839029312134
+      },
+      "away": {
+        "passing_yards": 256.5855712890625,
+        "rushing_yards": 122.11160278320312,
+        "sacks_taken": 2.1874730587005615
+      }
+    },
+    "reasons": [
+      {
+        "text": "az ellenfél-korrigált támadó hatékonyság különbsége - erősen GB felé billenti az esélyt",
+        "contribution": -0.3916386663913727
+      },
+      {
+        "text": "GB: az irányító célzási pontossága (CPOE) ilyen időjárásban - erősen TB felé billenti az esélyt",
+        "contribution": 0.30771076679229736
+      },
+      {
+        "text": "GB: a csapat összesített sérülés-terhe - erősen GB felé billenti az esélyt",
+        "contribution": -0.12573328614234924
+      },
+      {
+        "text": "a futójáték elmúlt formája (EPA/play) különbsége - erősen TB felé billenti az esélyt",
+        "contribution": 0.10703697800636292
+      },
+      {
+        "text": "az irányító időjárás-kondicionált EPA-hatékonysága különbsége - erősen GB felé billenti az esélyt",
+        "contribution": -0.10324931889772415
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "MIN",
+    "away_team": "MIA",
+    "home_win_prob": 0.8862,
+    "home_starter": {
+      "name": "C.Wentz",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "M.Willis",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 234.58738708496094,
+        "rushing_yards": 124.51932525634766,
+        "sacks_taken": 2.451659679412842
+      },
+      "away": {
+        "passing_yards": 209.9666748046875,
+        "rushing_yards": 84.11286926269531,
+        "sacks_taken": 3.3571269512176514
+      }
+    },
+    "reasons": [
+      {
+        "text": "MIA: a passz-védekezés elmúlt formája - erősen MIN felé billenti az esélyt",
+        "contribution": 0.6835781931877136
+      },
+      {
+        "text": "az ellenfél-korrigált védekező hatékonyság különbsége - erősen MIN felé billenti az esélyt",
+        "contribution": 0.3727443218231201
+      },
+      {
+        "text": "MIN: a passz-védekezés elmúlt formája - erősen MIN felé billenti az esélyt",
+        "contribution": 0.3406485915184021
+      },
+      {
+        "text": "MIN: az irányító időjárás-kondicionált EPA-hatékonysága - erősen MIN felé billenti az esélyt",
+        "contribution": 0.27476030588150024
+      },
+      {
+        "text": "MIA: az irányító időjárás-kondicionált EPA-hatékonysága - erősen MIN felé billenti az esélyt",
+        "contribution": 0.15722735226154327
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "LV",
+    "away_team": "KC",
+    "home_win_prob": 0.4977,
+    "home_starter": {
+      "name": "K.Cousins",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "P.Mahomes",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 274.1512145996094,
+        "rushing_yards": 128.1031036376953,
+        "sacks_taken": 2.3711345195770264
+      },
+      "away": {
+        "passing_yards": 234.70062255859375,
+        "rushing_yards": 123.64803314208984,
+        "sacks_taken": 2.276350736618042
+      }
+    },
+    "reasons": [
+      {
+        "text": "az ellenfél-korrigált támadó hatékonyság különbsége - erősen KC felé billenti az esélyt",
+        "contribution": -0.5055835843086243
+      },
+      {
+        "text": "KC: az irányító időjárás-kondicionált EPA-hatékonysága - erősen LV felé billenti az esélyt",
+        "contribution": 0.29945918917655945
+      },
+      {
+        "text": "a futójáték elmúlt formája (EPA/play) különbsége - erősen LV felé billenti az esélyt",
+        "contribution": 0.2185496985912323
+      },
+      {
+        "text": "LV: a fut-védekezés elmúlt formája - erősen KC felé billenti az esélyt",
+        "contribution": -0.12355367094278336
+      },
+      {
+        "text": "az irányító időjárás-kondicionált EPA-hatékonysága különbsége - erősen KC felé billenti az esélyt",
+        "contribution": -0.11769126355648041
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "SEA",
+    "away_team": "LAC",
+    "home_win_prob": 0.7656,
+    "home_starter": {
+      "name": "D.Lock",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "J.Herbert",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 233.75192260742188,
+        "rushing_yards": 120.90026092529297,
+        "sacks_taken": 1.9084395170211792
+      },
+      "away": {
+        "passing_yards": 239.30548095703125,
+        "rushing_yards": 97.30184936523438,
+        "sacks_taken": 1.8168740272521973
+      }
+    },
+    "reasons": [
+      {
+        "text": "az ellenfél-korrigált védekező hatékonyság különbsége - erősen SEA felé billenti az esélyt",
+        "contribution": 0.22561484575271606
+      },
+      {
+        "text": "SEA: az ellenfél-korrigált támadó hatékonyság - erősen SEA felé billenti az esélyt",
+        "contribution": 0.1985648274421692
+      },
+      {
+        "text": "a passzjáték elmúlt formája (EPA/play) különbsége - erősen SEA felé billenti az esélyt",
+        "contribution": 0.1630796194076538
+      },
+      {
+        "text": "a futójáték elmúlt formája (EPA/play) különbsége - erősen SEA felé billenti az esélyt",
+        "contribution": 0.14034660160541534
+      },
+      {
+        "text": "LAC: a csapat összesített sérülés-terhe - erősen LAC felé billenti az esélyt",
+        "contribution": -0.13931505382061005
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "SF",
+    "away_team": "DEN",
+    "home_win_prob": 0.6144,
+    "home_starter": {
+      "name": "B.Purdy",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "B.Nix",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 286.83575439453125,
+        "rushing_yards": 128.75999450683594,
+        "sacks_taken": 1.9579792022705078
+      },
+      "away": {
+        "passing_yards": 232.3836212158203,
+        "rushing_yards": 108.08749389648438,
+        "sacks_taken": 2.5398592948913574
+      }
+    },
+    "reasons": [
+      {
+        "text": "az ellenfél-korrigált támadó hatékonyság különbsége - erősen SF felé billenti az esélyt",
+        "contribution": 0.236880362033844
+      },
+      {
+        "text": "SF: a passzjáték elmúlt formája (EPA/play) - erősen DEN felé billenti az esélyt",
+        "contribution": -0.22531065344810486
+      },
+      {
+        "text": "SF: az ellenfél-korrigált támadó hatékonyság - erősen SF felé billenti az esélyt",
+        "contribution": 0.22515533864498138
+      },
+      {
+        "text": "az ellenfél-korrigált védekező hatékonyság különbsége - erősen SF felé billenti az esélyt",
+        "contribution": 0.18664340674877167
+      },
+      {
+        "text": "DEN: az ellenfél-korrigált védekező hatékonyság - erősen DEN felé billenti az esélyt",
+        "contribution": -0.17092080414295197
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "CAR",
+    "away_team": "DET",
+    "home_win_prob": 0.27,
+    "home_starter": {
+      "name": "B.Young",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "J.Goff",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 235.4323272705078,
+        "rushing_yards": 145.6520233154297,
+        "sacks_taken": 2.133025884628296
+      },
+      "away": {
+        "passing_yards": 256.3172302246094,
+        "rushing_yards": 116.72185516357422,
+        "sacks_taken": 1.8314353227615356
+      }
+    },
+    "reasons": [
+      {
+        "text": "az ellenfél-korrigált támadó hatékonyság különbsége - erősen DET felé billenti az esélyt",
+        "contribution": -0.7209782600402832
+      },
+      {
+        "text": "CAR: az irányító időjárás-kondicionált EPA-hatékonysága - erősen DET felé billenti az esélyt",
+        "contribution": -0.338396281003952
+      },
+      {
+        "text": "CAR: a passzjáték elmúlt formája (EPA/play) - erősen CAR felé billenti az esélyt",
+        "contribution": 0.1784178614616394
+      },
+      {
+        "text": "az irányító időjárás-kondicionált EPA-hatékonysága különbsége - erősen DET felé billenti az esélyt",
+        "contribution": -0.13829082250595093
+      },
+      {
+        "text": "a fut-védekezés elmúlt formája különbsége - erősen DET felé billenti az esélyt",
+        "contribution": -0.1229325607419014
+      }
+    ]
+  },
+  {
+    "season": 2026,
+    "week": 4,
+    "home_team": "NO",
+    "away_team": "ATL",
+    "home_win_prob": 0.4107,
+    "home_starter": {
+      "name": "T.Shough",
+      "confidence": "confirmed_healthy"
+    },
+    "away_starter": {
+      "name": "M.Penix",
+      "confidence": "confirmed_healthy"
+    },
+    "stats": {
+      "home": {
+        "passing_yards": 239.13388061523438,
+        "rushing_yards": 117.39116668701172,
+        "sacks_taken": 2.621220350265503
+      },
+      "away": {
+        "passing_yards": 259.1783752441406,
+        "rushing_yards": 115.93936157226562,
+        "sacks_taken": 2.012890100479126
+      }
+    },
+    "reasons": [
+      {
+        "text": "az ellenfél-korrigált támadó hatékonyság különbsége - erősen ATL felé billenti az esélyt",
+        "contribution": -0.38844412565231323
+      },
+      {
+        "text": "ATL: az irányító időjárás-kondicionált EPA-hatékonysága - erősen NO felé billenti az esélyt",
+        "contribution": 0.34932729601860046
+      },
+      {
+        "text": "NO: az ellenfél-korrigált támadó hatékonyság - erősen ATL felé billenti az esélyt",
+        "contribution": -0.2691632807254791
+      },
+      {
+        "text": "az irányító célzási pontossága (CPOE) ilyen időjárásban különbsége - erősen NO felé billenti az esélyt",
+        "contribution": 0.19879961013793945
+      },
+      {
+        "text": "NO: a passz-védekezés elmúlt formája - erősen ATL felé billenti az esélyt",
+        "contribution": -0.19761255383491516
+      }
+    ]
+  }
+]

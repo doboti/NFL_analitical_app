@@ -76,6 +76,26 @@ Minden Python szolgáltatás **egyetlen közös `nflapp-app` image-et** használ
 (lásd a `docker-compose.yml` `x-app` horgonyát) - ez elkerüli, hogy 6 külön,
 egyenként ~4GB-os image épüljön (torch/easyocr/ultralytics duplikálva).
 
+### Élő stream mód
+
+```bash
+STREAM_MODE=live docker compose up -d
+```
+
+Ilyenkor az `ingestion` egy valódi élő YouTube HLS-adatfolyamot (`LIVE_URL`,
+alapból egy 24/7 forgó archív-meccs csatorna) dolgoz fel folyamatosan,
+azonnal publikálva a Kafka topicokra - az OCR/Win Probability így valós
+időben megy. A highlightokhoz szükséges "utó-részt" (POST_ROLL) fizikailag
+nem lehet azonnal kivágni élőben (még nem történt meg) - a `highlight_service`
+ezt egy késleltetett várólistával kezeli.
+
+**Erőforrás-korlátok**: a torch/OpenCV alapból minden elérhető magot
+lefoglalna egyetlen híváskor is, ami 8 magos gépen ~500%+ CPU-t okozott. A
+`docker-compose.yml` ezért szál-limiteket (`OMP_NUM_THREADS` stb.),
+kemény per-konténer CPU/memória limiteket, 480p élő felbontást és ritkított
+OCR-hívást (`OCR_STRIDE`) állít be - nyugalmi állapotban ~10-15% CPU, rövid
+OCR-tüskékkel.
+
 ## Tesztelés
 
 ```bash

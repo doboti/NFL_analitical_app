@@ -128,5 +128,7 @@ services:
         limits:
           cpus: "0.5"
           memory: 512M
+    volumes:
+      - ./data:/app/data
     ports:
       - "8501:8501"

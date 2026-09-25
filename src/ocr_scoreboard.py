@@ -144,17 +144,35 @@ def parse_ocr_tokens(tokens: list[tuple]) -> ScoreboardState:
         if re.fullmatch(r"\d{1,2}", clean):
             score_hits.append((x, int(clean)))
 
-    if len(team_hits) >= 1 and len(score_hits) >= 1:
-        team_hits.sort(key=lambda t: t[0])
-        score_hits.sort(key=lambda t: t[0])
-        if len(team_hits) >= 1:
+    team_hits.sort(key=lambda t: t[0])
+    score_hits.sort(key=lambda t: t[0])
+
+    if len(score_hits) >= 1:
+        state.away_score = score_hits[0][1]
+    if len(score_hits) >= 2:
+        state.home_score = score_hits[1][1]
+
+    if len(team_hits) >= 2:
+        state.away_team = team_hits[0][1]
+        state.home_team = team_hits[1][1]
+    elif len(team_hits) == 1 and len(score_hits) == 2:
+        # Csak EGY csapatkódot ismertünk fel (a másik OCR-hibából kimaradt) -
+        # NEM szabad automatikusan "away"-nek venni, mert lehet, hogy épp a
+        # jobb oldali (home) csapatot sikerült felismerni. Ehelyett a hozzá
+        # X-koordinátában LEGKÖZELEBBI eredmény-számhoz igazítjuk: ha a bal
+        # oldali (away) eredményhez van közelebb, akkor away, különben home.
+        team_x = team_hits[0][0]
+        dist_to_away_score = abs(team_x - score_hits[0][0])
+        dist_to_home_score = abs(team_x - score_hits[1][0])
+        if dist_to_away_score <= dist_to_home_score:
             state.away_team = team_hits[0][1]
-        if len(team_hits) >= 2:
-            state.home_team = team_hits[1][1]
-        if len(score_hits) >= 1:
-            state.away_score = score_hits[0][1]
-        if len(score_hits) >= 2:
-            state.home_score = score_hits[1][1]
+        else:
+            state.home_team = team_hits[0][1]
+    elif len(team_hits) == 1:
+        # Nincs 2 eredmény-jelzés a pozíció-alapú döntéshez - jobb híján az
+        # away alapértelmezésre esünk vissza (a korábbi, kevésbé pontos
+        # viselkedés), mert ekkor sincs jobb infónk a döntéshez.
+        state.away_team = team_hits[0][1]
 
     return state
 
