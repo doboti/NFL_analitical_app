@@ -6,7 +6,17 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from ocr_scoreboard import REFERENCE_RESOLUTION, SCOREBOARD_ROI, crop_and_upscale, parse_ocr_tokens  # noqa: E402
+from ocr_scoreboard import (  # noqa: E402
+    REFERENCE_RESOLUTION,
+    SCOREBOARD_ROI,
+    SCOREBOARD_ROI_BOTTOM,
+    SCOREBOARD_ROI_CANDIDATES,
+    SCOREBOARD_ROI_TOP,
+    ScoreboardState,
+    _state_score,
+    crop_and_upscale,
+    parse_ocr_tokens,
+)
 
 
 def test_crop_and_upscale_scales_roi_to_actual_frame_size():
@@ -140,3 +150,34 @@ def test_empty_tokens():
     state = parse_ocr_tokens([])
     assert state.raw_text == ""
     assert state.down is None
+
+
+def test_scoreboard_roi_candidates_cover_top_and_bottom_of_frame():
+    """Regressziós teszt: élesben előfordult egy CBS-stílusú felvétel, ahol a
+    csapatok/pontok/idő sáv a kép TETEJÉN volt, nem alul (mint az addig
+    kalibrált NBC-stílusú klipnél) - az OCR-nek emiatt fel kell tudnia
+    dolgozni mindkét elrendezést, ROI-jelöltek listájával."""
+    ref_w, ref_h = REFERENCE_RESOLUTION
+    assert SCOREBOARD_ROI_BOTTOM in SCOREBOARD_ROI_CANDIDATES
+    assert SCOREBOARD_ROI_TOP in SCOREBOARD_ROI_CANDIDATES
+
+    _, top_y1, _, top_y2 = SCOREBOARD_ROI_TOP
+    _, bottom_y1, _, bottom_y2 = SCOREBOARD_ROI_BOTTOM
+    assert top_y2 < ref_h / 2  # a felső jelölt a kép felső felében van
+    assert bottom_y1 > ref_h / 2  # az alsó jelölt a kép alsó felében van
+    assert SCOREBOARD_ROI == SCOREBOARD_ROI_BOTTOM  # visszafelé kompatibilis alapérték
+
+
+def test_state_score_counts_recognized_fields():
+    empty_state = ScoreboardState(timestamp_sec=0.0)
+    assert _state_score(empty_state) == 0
+
+    full_state = ScoreboardState(
+        timestamp_sec=0.0, quarter="1ST", clock="10:20", down=2, distance=7,
+        away_team="NE", away_score=0, home_team="DEN", home_score=3,
+    )
+    assert _state_score(full_state) == 8
+
+    partial_state = ScoreboardState(timestamp_sec=0.0, away_team="NE", home_team="DEN")
+    assert _state_score(partial_state) == 2
+    assert _state_score(partial_state) > _state_score(empty_state)

@@ -281,8 +281,18 @@ def render_prediction_card(pred: dict):
     home_color = TEAM_COLORS.get(home, DEFAULT_TEAM_COLOR)
     away_color = TEAM_COLORS.get(away, DEFAULT_TEAM_COLOR)
 
+    actual = pred.get("actual")
+
     with st.container(border=True):
         st.markdown(f"### {away} @ {home}")
+        if actual:
+            predicted_home_win = home_prob > 0.5
+            hit = predicted_home_win == actual["home_win"]
+            badge = "✅ Predikció talált" if hit else "❌ Predikció tévedett"
+            st.caption(
+                f"🕑 **Már lejátszva** - valós végeredmény: {home} {actual['home_score']} - "
+                f"{actual['away_score']} {away} · {badge}"
+            )
 
         c1, c2 = st.columns(2)
         with c1:
@@ -306,14 +316,32 @@ def render_prediction_card(pred: dict):
             f"{away}: **{as_.get('name') or '?'}** ({_confidence_badge(as_.get('confidence'))})"
         )
 
-        st.markdown("**Statisztika-predikció**")
+        st.markdown("**Statisztika-predikció**" + (" vs. valós" if actual else ""))
         stats = pred["stats"]
-        stat_df = pd.DataFrame({
-            "Csapat": [home, away],
-            "Dobott yard": [stats["home"]["passing_yards"], stats["away"]["passing_yards"]],
-            "Futott yard": [stats["home"]["rushing_yards"], stats["away"]["rushing_yards"]],
-            "Elszenvedett sack": [stats["home"]["sacks_taken"], stats["away"]["sacks_taken"]],
-        }).round(1)
+        if actual:
+            a_stats = actual["stats"]
+            stat_df = pd.DataFrame({
+                "Csapat": [home, away],
+                "Dobott yard (pred / valós)": [
+                    f"{stats['home']['passing_yards']:.0f} / {a_stats['home']['passing_yards']:.0f}",
+                    f"{stats['away']['passing_yards']:.0f} / {a_stats['away']['passing_yards']:.0f}",
+                ],
+                "Futott yard (pred / valós)": [
+                    f"{stats['home']['rushing_yards']:.0f} / {a_stats['home']['rushing_yards']:.0f}",
+                    f"{stats['away']['rushing_yards']:.0f} / {a_stats['away']['rushing_yards']:.0f}",
+                ],
+                "Elszenvedett sack (pred / valós)": [
+                    f"{stats['home']['sacks_taken']:.1f} / {a_stats['home']['sacks_taken']:.0f}",
+                    f"{stats['away']['sacks_taken']:.1f} / {a_stats['away']['sacks_taken']:.0f}",
+                ],
+            })
+        else:
+            stat_df = pd.DataFrame({
+                "Csapat": [home, away],
+                "Dobott yard": [stats["home"]["passing_yards"], stats["away"]["passing_yards"]],
+                "Futott yard": [stats["home"]["rushing_yards"], stats["away"]["rushing_yards"]],
+                "Elszenvedett sack": [stats["home"]["sacks_taken"], stats["away"]["sacks_taken"]],
+            }).round(1)
         st.dataframe(stat_df, hide_index=True, use_container_width=True)
 
         st.markdown("**Miért ez a predikció:**")
@@ -338,7 +366,20 @@ def render_predictions_mode():
     season, week = predictions[0]["season"], predictions[0]["week"]
     st.info(f"📅 {season} szezon, {week}. hét ({len(predictions)} meccs)")
 
+    already_played = [p for p in predictions if p.get("actual")]
+    if already_played:
+        st.subheader("🧪 Modell-hatékonyság (már eldőlt meccseken)")
+        st.caption("Ezekre a meccsekre a modell UGYANÚGY, kizárólag a meccs előtti "
+                   "adatokból adott predikciót - a valós eredmény csak utólag, "
+                   "összehasonlításképp van feltüntetve.")
+        for pred in sorted(already_played, key=lambda p: p["home_win_prob"], reverse=True):
+            render_prediction_card(pred)
+        st.divider()
+        st.subheader("🔮 Még hátralévő meccsek")
+
     for pred in sorted(predictions, key=lambda p: p["home_win_prob"], reverse=True):
+        if pred.get("actual"):
+            continue
         render_prediction_card(pred)
 
 

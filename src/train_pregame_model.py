@@ -50,6 +50,19 @@ TEAM_FEATURE_COLS = [
 ]
 
 
+def determine_current_week(schedule_df: pd.DataFrame) -> tuple[int, int]:
+    """A legkorábbi (season, week) pár, amelyben van még le nem játszott meccs
+    (result == NaN). Ez a "jelenlegi" hét, amelyre predikciót kell adni - nem
+    feltétlenül a legutóbb ELKEZDŐDÖTT hét, mert egy hét (pl. a csütörtök
+    esti meccs miatt) már elkezdődhetett, miközben a hét többi meccse még
+    hátravan és azokra még van értelme predikciót adni."""
+    unplayed = schedule_df[schedule_df["result"].isna()]
+    if unplayed.empty:
+        raise ValueError("Nincs több le nem játszott meccs a menetrendben.")
+    first = unplayed.sort_values(["season", "week"]).iloc[0]
+    return int(first["season"]), int(first["week"])
+
+
 def build_matchup_table(
     team_features: pd.DataFrame, schedule_df: pd.DataFrame, actuals: Optional[pd.DataFrame] = None,
 ) -> pd.DataFrame:
@@ -444,13 +457,20 @@ if __name__ == "__main__":
     model.save_model(str(MODEL_PATH))
     print(f"Modell elmentve: {MODEL_PATH}")
 
-    target_season, target_week = 2026, 4
-    print(f"\nPredikció: {target_season} szezon {target_week}. hete")
+    target_season, target_week = determine_current_week(schedule)
+    print(f"\nPredikció: {target_season} szezon {target_week}. hete (legkorábbi hét, "
+          f"amelyben van még le nem játszott meccs)")
     pred_rows = build_prediction_rows_for_week(
         pbp, schedule, injuries, team_features, target_season, target_week,
     )
 
+    # A CÉL-HÉT ÖSSZES meccse bekerül, a már lejátszottak is: ezeknél a
+    # predikció ugyanúgy KIZÁRÓLAG a hét előtti (leakage-mentes) historikus
+    # adatokból épül (lásd build_prediction_rows_for_week fent), a valós
+    # eredményt csak UTÓLAG, összehasonlításképp csatoljuk hozzá - így
+    # ellenőrizhető a modell tényleges hatékonysága már eldőlt meccseken is.
     upcoming = schedule[(schedule.season == target_season) & (schedule.week == target_week)]
+    actuals_by_game = {(r["game_id"], r["team"]): r for _, r in actuals.iterrows()}
     all_predictions = []
     for _, g in upcoming.iterrows():
         home_row = pred_rows[pred_rows.team == g["home_team"]]
@@ -488,7 +508,7 @@ if __name__ == "__main__":
             reason_texts.append({"text": text, "contribution": contribution})
             print(f"  - {text} (hatás: {contribution:+.3f})")
 
-        all_predictions.append({
+        pred_entry = {
             "season": target_season, "week": target_week,
             "home_team": home_team, "away_team": away_team,
             "home_win_prob": round(home_win_prob, 4),
@@ -498,7 +518,35 @@ if __name__ == "__main__":
                               "confidence": away_row.get("confidence")},
             "stats": stats,
             "reasons": reason_texts,
-        })
+        }
+
+        if pd.notna(g["result"]):
+            game_id = g["game_id"]
+            home_actual = actuals_by_game.get((game_id, home_team))
+            away_actual = actuals_by_game.get((game_id, away_team))
+            actual = {
+                "home_score": int(g["home_score"]), "away_score": int(g["away_score"]),
+                "home_win": bool(g["home_score"] > g["away_score"]),
+                "stats": {
+                    "home": {
+                        "passing_yards": float(home_actual["actual_passing_yards"]) if home_actual is not None else None,
+                        "rushing_yards": float(home_actual["actual_rushing_yards"]) if home_actual is not None else None,
+                        "sacks_taken": float(home_actual["actual_sacks_taken"]) if home_actual is not None else None,
+                    },
+                    "away": {
+                        "passing_yards": float(away_actual["actual_passing_yards"]) if away_actual is not None else None,
+                        "rushing_yards": float(away_actual["actual_rushing_yards"]) if away_actual is not None else None,
+                        "sacks_taken": float(away_actual["actual_sacks_taken"]) if away_actual is not None else None,
+                    },
+                },
+            }
+            pred_entry["actual"] = actual
+            predicted_home_win = home_win_prob > 0.5
+            hit = "TALÁLT" if predicted_home_win == actual["home_win"] else "TÉVEDETT"
+            print(f"  [MÁR LEJÁTSZVA] Valós végeredmény: {home_team} {actual['home_score']} - "
+                  f"{actual['away_score']} {away_team} -> a győztes-predikció {hit}")
+
+        all_predictions.append(pred_entry)
 
     import json
     with open(PREDICTIONS_PATH, "w", encoding="utf-8") as f:

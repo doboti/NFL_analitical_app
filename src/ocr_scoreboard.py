@@ -21,12 +21,18 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# ROI a 1280x720-as forráshoz kalibrálva (bal, fent, jobb, lent).
-# Megjegyzés: ez a klip-specifikus érték a jelenleg letöltött adáshoz igazítva
-# (alsó sáv, NBC-stílus) - más adásnál (pl. felső sáv, CBS-stílus) újra kell
-# kalibrálni, lásd a Modul 2 dokumentációját a fájl elején.
-REFERENCE_RESOLUTION = (1280, 720)  # a fenti ROI ehhez a felbontáshoz van kalibrálva
-SCOREBOARD_ROI = (180, 635, 1080, 675)
+# ROI-k a 1280x720-as forráshoz kalibrálva (bal, fent, jobb, lent).
+# A scoreboard sáv adásonként MÁS-MÁS HELYEN lehet a képen (pl. NBC/ESPN
+# jellemzően ALUL, CBS jellemzően FELÜL rajzolja ki) - ezért nem egyetlen
+# fix ROI-t nézünk, hanem több JELÖLT ROI-t (lásd SCOREBOARD_ROI_CANDIDATES
+# lent), és minden frame-nél azt fogadjuk el, amelyiken a legtöbb mezőt
+# sikerül felismerni. Ha egy teljesen új adásstílus ROI-ja egyikkel sem
+# egyezik, ide kell felvenni egy újat.
+REFERENCE_RESOLUTION = (1280, 720)  # a lenti ROI-k ehhez a felbontáshoz vannak kalibrálva
+SCOREBOARD_ROI_BOTTOM = (180, 635, 1080, 675)  # alsó sáv (pl. NBC-stílus)
+SCOREBOARD_ROI_TOP = (280, 20, 1000, 100)  # felső sáv (pl. CBS-stílus)
+SCOREBOARD_ROI_CANDIDATES = [SCOREBOARD_ROI_BOTTOM, SCOREBOARD_ROI_TOP]
+SCOREBOARD_ROI = SCOREBOARD_ROI_BOTTOM  # visszafelé kompatibilis alapérték (pl. tesztekhez)
 UPSCALE_FACTOR = 3
 SAMPLE_INTERVAL_SEC = 1.0
 
@@ -177,24 +183,44 @@ def parse_ocr_tokens(tokens: list[tuple]) -> ScoreboardState:
     return state
 
 
+def _state_score(state: ScoreboardState) -> int:
+    """Hány mezőt sikerült felismerni - ez alapján választjuk ki, melyik ROI-
+    jelölt (felső/alsó sáv) illeszkedik az aktuális adásra."""
+    fields = (state.quarter, state.clock, state.down, state.distance,
+              state.away_team, state.away_score, state.home_team, state.home_score)
+    return sum(1 for f in fields if f is not None)
+
+
 class ScoreboardReader:
-    def __init__(self, roi=SCOREBOARD_ROI, scale=UPSCALE_FACTOR):
+    def __init__(self, roi=None, scale=UPSCALE_FACTOR, roi_candidates=None):
         import easyocr  # lusta import: a tiszta parszoló logika (pl. tesztekhez)
         # ne igényelje az easyocr+torch telepítését, csak ha ténylegesen OCR-ezünk.
 
-        self.roi = roi
+        # Ha a hívó KIFEJEZETTEN megad egy roi-t, csak azt próbáljuk (pl. korábbi
+        # kalibrálás után, teljesítmény miatt) - egyébként minden jelöltet
+        # (felső + alsó sáv) végignézünk, és a legjobb találatot tartjuk meg.
+        self.roi_candidates = [roi] if roi is not None else (roi_candidates or SCOREBOARD_ROI_CANDIDATES)
         self.scale = scale
         self.reader = easyocr.Reader(["en"], gpu=False, verbose=False)
 
     def read_frame(self, frame: np.ndarray, timestamp_sec: float) -> ScoreboardState:
-        crop = crop_and_upscale(frame, self.roi, self.scale)
-        if crop.size == 0:
-            return ScoreboardState(timestamp_sec=round(timestamp_sec, 2), raw_text="")
-        results = self.reader.readtext(crop)
-        tokens = [(bbox[0][0], text, conf) for bbox, text, conf in results]
-        state = parse_ocr_tokens(tokens)
-        state.timestamp_sec = round(timestamp_sec, 2)
-        return state
+        best_state = None
+        best_score = -1
+        for roi in self.roi_candidates:
+            crop = crop_and_upscale(frame, roi, self.scale)
+            if crop.size == 0:
+                continue
+            results = self.reader.readtext(crop)
+            tokens = [(bbox[0][0], text, conf) for bbox, text, conf in results]
+            state = parse_ocr_tokens(tokens)
+            score = _state_score(state)
+            if score > best_score:
+                best_state, best_score = state, score
+
+        if best_state is None:
+            best_state = ScoreboardState(raw_text="")
+        best_state.timestamp_sec = round(timestamp_sec, 2)
+        return best_state
 
 
 def process_video(video_path: Path, out_path: Path, sample_interval=SAMPLE_INTERVAL_SEC):
